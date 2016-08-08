@@ -126,8 +126,8 @@ bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = N
       res <- data.frame(Frequency = f,
                         Magnitude = mag,
                         Phase = phase,
-                        LabelMag = lab,
-                        LabelPhase = lab)
+                        LabelMag = as.character(lab),
+                        LabelPhase = as.character(lab))
     } else if (is.null(label)) {
       res <- data.frame(Frequency = f,
                         Magnitude = mag,
