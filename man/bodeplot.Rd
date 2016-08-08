@@ -38,5 +38,6 @@ bodeplot(c(0, 1), A = matrix(c(-1,1,0,-1), nrow = 2),
                   B = matrix(c(-1,1), nrow = 2),
                   C = matrix(c(0,1), ncol=2),
                   D = 0, highlight = 2, label = "Highlight")
+
 }
 

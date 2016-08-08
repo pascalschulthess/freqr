@@ -21,5 +21,6 @@ Nyquist plot
 }
 \examples{
 nyquistplot(c(-2, 3), n = c(2, 5, 1), d = c(1, 2, 3))
+
 }
 

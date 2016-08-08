@@ -16,11 +16,10 @@
 #'                   B = matrix(c(-1,1), nrow = 2),
 #'                   C = matrix(c(0,1), ncol=2),
 #'                   D = 0, highlight = 2, label = "Highlight")
+#'
+#' @export
 
-bodeplot <- function(fr,
-                     n = NULL, d = NULL,
-                     A = NULL, B = NULL, C = NULL, D = NULL,
-                     highlight = NULL, label = NULL) {
+bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = NULL, highlight = NULL, label = NULL) {
 
   # Check inputs ------------------------------------------------------------
   # Check method
@@ -105,6 +104,7 @@ bodeplot <- function(fr,
 
 
   # Add labels if desired ---------------------------------------------------
+  res <- NULL
   if (!is.null(highlight)) {
     if (length(label) == 1 && label[1] == "numeric") {
       label.mag <- paste(round(log10(f), 2), round(mag, 2), sep = ", ")
@@ -142,53 +142,39 @@ bodeplot <- function(fr,
 
   # Plot --------------------------------------------------------------------
   # Magnitude
-  p1 <- res %>%
-    dplyr::select(Frequency, Magnitude) %>%
-    ggplot2::ggplot() +
-    ggplot2::geom_line(ggplot2::aes(Frequency, Magnitude)) +
+  p1 <- ggplot2::ggplot(data = res, ggplot2::aes_string(x = "Frequency", y = "Magnitude")) +
+    ggplot2::geom_line(ggplot2::aes_string(x = "Frequency", y = "Magnitude")) +
     ggplot2::geom_hline(ggplot2::aes(yintercept = 0), linetype = "dashed") +
     ggplot2::scale_x_log10(breaks = 10 ^ seq(fr[1], fr[2], 1)) +
     ggplot2::ggtitle("Bode diagram") +
-    ggplot2::ylab("Magnitude [dB]") +
-    ggplot2::theme_bw() +
-    ggplot2::theme(axis.title.x = ggplot2::element_blank(),
-          axis.text.x = ggplot2::element_blank(),
-          axis.ticks.x = ggplot2::element_blank(),
-          panel.background = ggplot2::element_blank(),
-          plot.background = ggplot2::element_rect(fill = "transparent",colour = NA))
+    ggplot2::ylab("Magnitude [dB]")
 
   # Phase
-  p2 <- res %>%
-    dplyr::select(Frequency, Phase) %>%
-    ggplot2::ggplot() +
-    ggplot2::geom_line(ggplot2::aes(Frequency, Phase)) +
+  p2 <- ggplot2::ggplot(data = res, ggplot2::aes_string(x = "Frequency", y = "Phase")) +
+    ggplot2::geom_line(ggplot2::aes_string(x = "Frequency", y = "Phase")) +
     ggplot2::scale_y_continuous(breaks = seq(from = -360, to = 360, by = 45)) +
     ggplot2::scale_x_log10(breaks = 10 ^ seq(fr[1], fr[2], 1), labels = scales::comma) +
     ggplot2::xlab('Frequency [rad/s]') +
-    ggplot2::ylab("Phase [deg]") +
-    ggplot2::theme_bw() +
-    ggplot2::theme(panel.background = ggplot2::element_blank(),
-          plot.background = ggplot2::element_rect(fill = "transparent",colour = NA))
-
+    ggplot2::ylab("Phase [deg]")
 
   # Add highlights and labels if desired ------------------------------------
   if (!is.null(highlight)) {
 
     # Highlights follow the ggplot2 color scheme
     hues = seq(15, 375, length = length(highlight) + 1)
-    cols <- hcl(h = hues, l = 65, c = 100)[1:length(highlight)]
+    cols <- grDevices::hcl(h = hues, l = 65, c = 100)[1:length(highlight)]
 
     # Add highlights to plot
     for (i in 1:length(highlight)) {
       h <- which.min(abs(res$Frequency - highlight[i]))
-      p1 <- p1 + ggplot2::geom_point(data = res[h,, drop = FALSE], mapping = ggplot2::aes(x = Frequency, y = Magnitude), color = cols[i], size = 3)
-      p2 <- p2 + ggplot2::geom_point(data = res[h,, drop = FALSE], mapping = ggplot2::aes(x = Frequency, y = Phase), color = cols[i], size = 3)
+      p1 <- p1 + ggplot2::geom_point(data = res[h,, drop = FALSE], mapping = ggplot2::aes_string(x = "Frequency", y = "Magnitude"), color = cols[i], size = 3)
+      p2 <- p2 + ggplot2::geom_point(data = res[h,, drop = FALSE], mapping = ggplot2::aes_string(x = "Frequency", y = "Phase"), color = cols[i], size = 3)
 
       if (!is.null(label)) {
-        p1 <- p1 + ggrepel::geom_label_repel(data = res[h,, drop = FALSE], mapping = ggplot2::aes(x = Frequency, y = Magnitude, label = as.character(LabelMag)), fill = cols[i], color = "white", box.padding = grid::unit(0.25, "lines"),
-                                    point.padding = grid::unit(0.5, "lines"))
-        p2 <- p2 + ggrepel::geom_label_repel(data = res[h,, drop = FALSE], mapping = ggplot2::aes(x = Frequency, y = Phase, label = as.character(LabelPhase)), fill = cols[i], color = "white", box.padding = grid::unit(0.25, "lines"),
-                                    point.padding = grid::unit(0.5, "lines"))
+        p1 <- p1 + ggrepel::geom_label_repel(data = res[h,, drop = FALSE], mapping = ggplot2::aes_string(x = "Frequency", y = "Magnitude", label = "LabelMag"), fill = cols[i], color = "white", box.padding = grid::unit(0.25, "lines"),
+                                             point.padding = grid::unit(0.5, "lines"))
+        p2 <- p2 + ggrepel::geom_label_repel(data = res[h,, drop = FALSE], mapping = ggplot2::aes_string(x = "Frequency", y = "Phase", label = "LabelPhase"), fill = cols[i], color = "white", box.padding = grid::unit(0.25, "lines"),
+                                             point.padding = grid::unit(0.5, "lines"))
       }
     }
   }

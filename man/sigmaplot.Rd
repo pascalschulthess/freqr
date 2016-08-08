@@ -24,9 +24,10 @@ Singular value plot
 Sigma plot
 }
 \examples{
-sigmaplot(c(-2, 2), A <- matrix(c(0, 1, -1, -1), nrow = 2)
-                    B <- diag(2)
-                    C <- matrix(c(10, 0, 0, 1), nrow = 2)
+sigmaplot(c(-2, 2), A <- matrix(c(0, 1, -1, -1), nrow = 2),
+                    B <- diag(2),
+                    C <- matrix(c(10, 0, 0, 1), nrow = 2),
                     D <- 0.1*diag(2))
+
 }
 

@@ -8,10 +8,4 @@ Description: A collection of functions for frequency-domain response analysis in
 License: MIT
 LazyData: TRUE
 RoxygenNote: 5.0.1
-Imports:
-    pracma,
-    dplyr,
-    ggplot2,
-    ggrepel,
-    grid,
-    reshape2
+Imports: pracma, dplyr, ggplot2, ggrepel, grid, reshape2, scales
