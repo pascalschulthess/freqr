@@ -37,17 +37,16 @@ G(s) = ----------------------
 from 10^0 to 10^1 and add a highlight at 2 [rad/s], the function inputs take the form
 
 ```
-bodeplot(c(0, 1),
-	     n = c(1, 0.1, 7.5),
-	     d = c(1, 0.12, 9, 0, 0), 
-	     highlight = 2,
-	     label = "Highlight"
-	     )
+bodeplot(fr = c(0, 1),
+	      n = c(1, 0.1, 7.5),
+	      d = c(1, 0.12, 9, 0, 0), 
+	      highlight = 2,
+	      label = "Highlight")
 ```
 
 and result in
 
-![](https://github.com/pascalschulthess/Frequency-domain-response-analysis-in-R/blob/master/bodeplot-example.png)
+![](https://github.com/pascalschulthess/freqr/blob/master/readme-examples/bodeplot-example.png)
 
 #### Dependencies
 
@@ -65,7 +64,7 @@ Takes the coefficients of a transfer function and generates a Nyquist plot.
 #### Usage
 
 ```
-nyquistplot(frequencyrange, numerator = NULL, denominator = NULL)
+nyquistplot(fr, n = NULL, d = NULL)
 ```
 
 #### Example
@@ -81,12 +80,12 @@ G(s) = ----------------
 from 10^-2 to 10^3 the function inputs take the form
 
 ```
-nyquistplot(c(-2, 3), numerator = 100, denominator = c(1, 6, 100))
+nyquistplot(fr = c(-2, 3), n = 100, d = c(1, 6, 100))
 ```
 
 and result in
 
-![](https://github.com/pascalschulthess/Frequency-domain-response-analysis-in-R/blob/master/nyquistplot-example.png)
+![](https://github.com/pascalschulthess/freqr/blob/master/readme-examples/nyquistplot-example.png)
 
 #### Dependencies
 
@@ -101,8 +100,7 @@ Take the matrices A, B, C, and D of a linear MIMO state space representation and
 #### Usage
 
 ```
-sigmaplot <- function(frequencyrange, 
-                      A = NULL, B = NULL, C = NULL, D = NULL)
+sigmaplot <- function(fr, A = NULL, B = NULL, C = NULL, D = NULL)
 ```
 
 #### Example
@@ -120,16 +118,16 @@ G(s) = |---|---| = |------|---------|
 from 10^-2 to 10^2 the function inputs take the form
 
 ```
-sigmaplot(c(-2, 2), 
-			A <- matrix(c(0, 1, -1, -1), nrow = 2),
-			B <- diag(2), 
-			C <- matrix(c(10, 0, 0, 1), nrow = 2), 
-			D <- 0.1*diag(2))
+sigmaplot(fr = c(-2, 2), 
+		   A = matrix(c(0, 1, -1, -1), nrow = 2),
+		   B = diag(2), 
+		   C = matrix(c(10, 0, 0, 1), nrow = 2), 
+		   D = 0.1*diag(2))
 ```
 
 and result in
 
-![](https://github.com/pascalschulthess/Frequency-domain-response-analysis-in-R/blob/master/sigmaplot-example.png)
+![](https://github.com/pascalschulthess/freqr/blob/master/readme-examples/sigmaplot-example.png)
 
 #### Dependencies
 
