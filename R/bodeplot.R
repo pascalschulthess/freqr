@@ -102,9 +102,12 @@ bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = N
     }
   }
 
+  # Put everything in a dataframe
+  res <- data.frame(Frequency = f,
+                    Magnitude = mag,
+                    Phase = phase)
 
   # Add labels if desired ---------------------------------------------------
-  res <- NULL
   if (!is.null(highlight)) {
     if (length(label) == 1 && label[1] == "numeric") {
       label.mag <- paste(round(log10(f), 2), round(mag, 2), sep = ", ")
@@ -112,33 +115,18 @@ bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = N
       label.phase <- paste(round(log10(f), 2), round(phase, 2), sep = ", ")
       label.phase <- paste0("10^", label.phase)
 
-      res <- data.frame(Frequency = f,
-                        Magnitude = mag,
-                        Phase = phase,
-                        LabelMag = label.mag,
-                        LabelPhase = label.phase)
+      res$LabelMag = as.character(label.mag)
+      res$LabelPhase = as.character(label.phase)
     } else if (!is.null(label) && label != "numeric") {
       lab <- rep(NA, length(f))
       for (i in 1:length(highlight)) {
         h <- which.min(abs(res$Frequency - highlight[i]))
         lab[h] <- label[i]
       }
-      res <- data.frame(Frequency = f,
-                        Magnitude = mag,
-                        Phase = phase,
-                        LabelMag = as.character(lab),
-                        LabelPhase = as.character(lab))
-    } else if (is.null(label)) {
-      res <- data.frame(Frequency = f,
-                        Magnitude = mag,
-                        Phase = phase)
+      res$LabelMag = as.character(lab)
+      res$LabelPhase = as.character(lab)
     }
-  } else {
-    res <- data.frame(Frequency = f,
-                      Magnitude = mag,
-                      Phase = phase)
   }
-
 
   # Plot --------------------------------------------------------------------
   # Magnitude

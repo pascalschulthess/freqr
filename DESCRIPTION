@@ -1,7 +1,7 @@
 Package: freqr
 Type: Package
 Title: Frequency-domain response analysis in R
-Version: 0.1.1
+Version: 0.1.0
 Author: Pascal Schulthess
 Maintainer: Pascal Schulthess <p.schulthess@lacdr.leidenuniv.nl>
 Description: A collection of functions for frequency-domain response analysis in R.
