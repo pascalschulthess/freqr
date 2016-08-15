@@ -92,13 +92,14 @@ bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = N
   # Phase
   phase <- 180/pi*Arg(G)
 
-  # If there's a sign switch in the phase
-  signswitch <- which(diff(sign(phase)) != 0)
-  if (length(signswitch) != 0) {
-    if (sign(phase[signswitch]) == 1) {
-      phase[1:signswitch] <- phase[1:signswitch] - 360
-    } else if (sign(phase[signswitch]) == -1) {
-      phase[1:signswitch] <- phase[1:signswitch] + 360
+  # If phase is groing above or below 180
+  phase.incr <- which(abs(phase - 180) == min(abs(phase - 180)))
+  phase.decr <- which(abs(phase - 180) == max(abs(phase - 180)))
+  if ((phase.incr != 1 && phase.incr != length(f)) || (phase.decr != 1 && phase.decr != length(f))) {
+    if (phase.incr < phase.decr) {
+      phase[1:phase.incr] <- phase[1:phase.incr] - 360
+    } else if (phase.decr < phase.incr) {
+      phase[1:phase.incr] <- phase[1:phase.incr] + 360
     }
   }
 
