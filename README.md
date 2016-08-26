@@ -19,9 +19,8 @@ Takes the coefficients of a transfer function or the matrices A, B, C and D of a
 #### Usage
 
 ```
-bodeplot <- function(fr, n = NULL, d = NULL, 
-                 A = NULL, B = NULL, C = NULL, D = NULL,
-                 highlight = NULL, label = NULL)
+bodeplot(fr, fr.unit = NULL, n = NULL, d = NULL, A = NULL, B = NULL,
+  C = NULL, D = NULL, highlight = NULL, label = NULL, as.period = F)
 ```
 
 #### Example
@@ -100,7 +99,8 @@ Take the matrices A, B, C, and D of a linear MIMO state space representation and
 #### Usage
 
 ```
-sigmaplot <- function(fr, A = NULL, B = NULL, C = NULL, D = NULL)
+sigmaplot(fr, fr.unit = NULL, A = NULL, B = NULL, C = NULL, D = NULL,
+  as.period = F)
 ```
 
 #### Example
