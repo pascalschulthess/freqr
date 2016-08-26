@@ -1,6 +1,7 @@
 #' Bode plot
 #'
 #' @param fr Frequency range in powers of 10
+#' @param fr.unit Unit of the frequency
 #' @param n Numerator coefficients of a transfer function
 #' @param d Denominator coefficients of a transfer function
 #' @param A Matrix A of a state-space representation
@@ -9,17 +10,23 @@
 #' @param D Matrix D of a state-space representation
 #' @param highlight Optional highlights in the plot
 #' @param label Optional labels on the highlights
+#' @param as.period Flag to plot as period
 #' @return Bode magnitude and phase plot
 #' @examples
-#' bodeplot(c(0, 1), n = c(1, 0.1, 7.5), d = c(1, 0.12, 9, 0, 0))
-#' bodeplot(c(0, 1), A = matrix(c(-1,1,0,-1), nrow = 2),
-#'                   B = matrix(c(-1,1), nrow = 2),
-#'                   C = matrix(c(0,1), ncol=2),
-#'                   D = 0, highlight = 2, label = "Highlight")
+#' bodeplot(fr = c(0, 1), n = c(1, 0.1, 7.5), d = c(1, 0.12, 9, 0, 0))
+#' bodeplot(fr = c(0, 1),
+#'           A = matrix(c(-1,1,0,-1), nrow = 2),
+#'           B = matrix(c(-1,1), nrow = 2),
+#'           C = matrix(c(0,1), ncol=2),
+#'           D = 0,
+#'           highlight = 2, label = "Highlight")
 #'
 #' @export
 
-bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = NULL, highlight = NULL, label = NULL) {
+bodeplot <- function(fr, fr.unit = NULL,
+                     n = NULL, d = NULL,
+                     A = NULL, B = NULL, C = NULL, D = NULL,
+                     highlight = NULL, label = NULL, as.period = F) {
 
   # Check inputs ------------------------------------------------------------
   # Check method
@@ -27,6 +34,11 @@ bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = N
     method = "tf"
   } else if (!is.null(A) && !is.null(B) && !is.null(C) && !is.null(D)) {
     method = "state-space"
+  }
+
+  # Check frequency unit
+  if (!is.null(fr.unit) && !is.character(fr.unit)) {
+    stop("fr.unit must be a string")
   }
 
   # Check numerator and denominator
@@ -59,6 +71,10 @@ bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = N
     stop("Custom labels must have the same length as the highlights.")
   }
 
+  # Check as.period
+  if (!is.logical(as.period)) {
+    stop("as.period must be logical")
+  }
 
   # Frequency ---------------------------------------------------------------
   f <- 10 ^ seq(from = fr[1], to = fr[2], length = 1000)
@@ -92,7 +108,7 @@ bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = N
   # Phase
   phase <- 180/pi*Arg(G)
 
-  # If phase is groing above or below 180
+  # If phase is growing above or below 180
   phase.incr <- which(abs(phase - 180) == min(abs(phase - 180)))
   phase.decr <- which(abs(phase - 180) == max(abs(phase - 180)))
   if ((phase.incr != 1 && phase.incr != length(f)) || (phase.decr != 1 && phase.decr != length(f))) {
@@ -104,9 +120,15 @@ bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = N
   }
 
   # Put everything in a dataframe
-  res <- data.frame(Frequency = f,
-                    Magnitude = mag,
-                    Phase = phase)
+  if (!isTRUE(as.period)) {
+    res <- data.frame(Frequency = f,
+                      Magnitude = mag,
+                      Phase = phase)
+  } else {
+    res <- data.frame(Frequency = 1/f,
+                      Magnitude = mag,
+                      Phase = phase)
+  }
 
   # Add labels if desired ---------------------------------------------------
   if (!is.null(highlight)) {
@@ -130,21 +152,39 @@ bodeplot <- function(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL, D = N
   }
 
   # Plot --------------------------------------------------------------------
+  # Frequency units
+  if (is.null(fr.unit) && !isTRUE(as.period)) {
+    fr.unit <- "rad/s"
+  } else if (is.null(fr.unit) && isTRUE(as.period)) {
+    fr.unit <- "s"
+  }
+
   # Magnitude
   p1 <- ggplot2::ggplot(data = res, ggplot2::aes_string(x = "Frequency", y = "Magnitude")) +
     ggplot2::geom_line(ggplot2::aes_string(x = "Frequency", y = "Magnitude")) +
     ggplot2::geom_hline(ggplot2::aes(yintercept = 0), linetype = "dashed") +
-    ggplot2::scale_x_log10(breaks = 10 ^ seq(fr[1], fr[2], 1)) +
-    ggplot2::ggtitle("Bode diagram") +
-    ggplot2::ylab("Magnitude [dB]")
+    ggplot2::ggtitle("Bode plot") +
+    ggplot2::ylab("Magnitude [dB]") +
+    ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                   axis.text.x = ggplot2::element_blank(),
+                   axis.ticks.x = ggplot2::element_blank())
 
   # Phase
   p2 <- ggplot2::ggplot(data = res, ggplot2::aes_string(x = "Frequency", y = "Phase")) +
     ggplot2::geom_line(ggplot2::aes_string(x = "Frequency", y = "Phase")) +
     ggplot2::scale_y_continuous(breaks = seq(from = -360, to = 360, by = 45)) +
-    ggplot2::scale_x_log10(breaks = 10 ^ seq(fr[1], fr[2], 1), labels = scales::comma) +
-    ggplot2::xlab('Frequency [rad/s]') +
     ggplot2::ylab("Phase [deg]")
+
+  # x-axis scaling and label
+  if (!isTRUE(as.period)) {
+    p1 <- p1 + ggplot2::scale_x_log10(breaks = 10 ^ seq(fr[1], fr[2], 1))
+    p2 <- p2 + ggplot2::scale_x_log10(breaks = 10 ^ seq(fr[1], fr[2], 1)) +
+      ggplot2::xlab(paste("Frequency", paste0("[", fr.unit, "]")))
+  } else {
+    p1 <- p1 + ggplot2::scale_x_log10()
+    p2 <- p2 + ggplot2::scale_x_log10() +
+      ggplot2::xlab(paste("Period", paste0("[", fr.unit, "]")))
+  }
 
   # Add highlights and labels if desired ------------------------------------
   if (!is.null(highlight)) {

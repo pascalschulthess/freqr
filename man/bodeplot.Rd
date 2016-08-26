@@ -4,11 +4,13 @@
 \alias{bodeplot}
 \title{Bode plot}
 \usage{
-bodeplot(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL,
-  D = NULL, highlight = NULL, label = NULL)
+bodeplot(fr, fr.unit = NULL, n = NULL, d = NULL, A = NULL, B = NULL,
+  C = NULL, D = NULL, highlight = NULL, label = NULL, as.period = F)
 }
 \arguments{
 \item{fr}{Frequency range in powers of 10}
+
+\item{fr.unit}{Unit of the frequency}
 
 \item{n}{Numerator coefficients of a transfer function}
 
@@ -25,6 +27,8 @@ bodeplot(fr, n = NULL, d = NULL, A = NULL, B = NULL, C = NULL,
 \item{highlight}{Optional highlights in the plot}
 
 \item{label}{Optional labels on the highlights}
+
+\item{as.period}{Flag to plot as period}
 }
 \value{
 Bode magnitude and phase plot
@@ -33,11 +37,13 @@ Bode magnitude and phase plot
 Bode plot
 }
 \examples{
-bodeplot(c(0, 1), n = c(1, 0.1, 7.5), d = c(1, 0.12, 9, 0, 0))
-bodeplot(c(0, 1), A = matrix(c(-1,1,0,-1), nrow = 2),
-                  B = matrix(c(-1,1), nrow = 2),
-                  C = matrix(c(0,1), ncol=2),
-                  D = 0, highlight = 2, label = "Highlight")
+bodeplot(fr = c(0, 1), n = c(1, 0.1, 7.5), d = c(1, 0.12, 9, 0, 0))
+bodeplot(fr = c(0, 1),
+          A = matrix(c(-1,1,0,-1), nrow = 2),
+          B = matrix(c(-1,1), nrow = 2),
+          C = matrix(c(0,1), ncol=2),
+          D = 0,
+          highlight = 2, label = "Highlight")
 
 }
 
