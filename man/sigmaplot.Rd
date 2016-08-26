@@ -4,10 +4,13 @@
 \alias{sigmaplot}
 \title{Sigma plot}
 \usage{
-sigmaplot(fr, A = NULL, B = NULL, C = NULL, D = NULL)
+sigmaplot(fr, fr.unit = NULL, A = NULL, B = NULL, C = NULL, D = NULL,
+  as.period = F)
 }
 \arguments{
 \item{fr}{Frequency range in powers of 10}
+
+\item{fr.unit}{Unit of the frequency}
 
 \item{A}{Matrix A of a state-space representation}
 
@@ -16,6 +19,8 @@ sigmaplot(fr, A = NULL, B = NULL, C = NULL, D = NULL)
 \item{C}{Matrix C of a state-space representation}
 
 \item{D}{Matrix D of a state-space representation}
+
+\item{as.period}{Flag to plot as period}
 }
 \value{
 Singular value plot
@@ -24,10 +29,11 @@ Singular value plot
 Sigma plot
 }
 \examples{
-sigmaplot(c(-2, 2), A <- matrix(c(0, 1, -1, -1), nrow = 2),
-                    B <- diag(2),
-                    C <- matrix(c(10, 0, 0, 1), nrow = 2),
-                    D <- 0.1*diag(2))
+sigmaplot(fr = c(-2, 2),
+           A = matrix(c(0, 1, -1, -1), nrow = 2),
+           B = diag(2),
+           C = matrix(c(10, 0, 0, 1), nrow = 2),
+           D = 0.1*diag(2))
 
 }
 
