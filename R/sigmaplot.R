@@ -90,7 +90,7 @@ sigmaplot <- function(fr, fr.unit = NULL,
     ggplot2::geom_hline(ggplot2::aes(yintercept = 0), linetype = "dashed") +
     ggplot2::ggtitle("Sigma plot") +
     ggplot2::xlab("Frequency [rad/s]") +
-    ggplot2::ylab("Magnitude [dB]")
+    ggplot2::ylab("Singular Values [dB]")
 
   # x-axis scaling and label
   if (!isTRUE(as.period)) {
