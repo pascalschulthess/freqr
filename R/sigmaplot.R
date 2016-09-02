@@ -52,27 +52,25 @@ sigmaplot <- function(fr, fr.unit = NULL,
   f <- 10 ^ seq(from = fr[1], to = fr[2], length = 1000)
 
   # Calculate singular values -----------------------------------------------
-  # Initialise singular values
-  sigma.max <- rep(NA, length(f))
-  sigma.min <- rep(NA, length(f))
+  # Number of singular values
+  G <- C %*% solve(complex(imaginary = f[1])*diag(dim(A)[1]) - A) %*% B + D
+  n.sigma <- length(svd(G)$d)
+
+  # Initialize sigma
+  sigmas <- matrix(NA, nrow = length(f), ncol = n.sigma)
 
   # Calculate G and sigmas from state space matrices
   for (i in 1:length(f)) {
     G <- C %*% solve(complex(imaginary = f[i])*diag(dim(A)[1]) - A) %*% B + D
-    sigmas <- svd(G)$d
-    sigma.max[i] <- 20*log10(Mod(utils::head(sigmas, 1)))
-    sigma.min[i] <- 20*log10(Mod(utils::tail(sigmas, 1)))
+    sigmas[i,] <- 20*log10(Mod(svd(G)$d))
   }
+  colnames(sigmas) <- paste("Sigma", 1:n.sigma)
 
   # Put everything in a dataframe
   if (!isTRUE(as.period)) {
-    res <- data.frame(Frequency = f,
-                      Sigma.max = sigma.max,
-                      sigma.min = sigma.min)
+    res <- cbind(data.frame(Frequency = f), as.data.frame(sigmas))
   } else {
-    res <- data.frame(Frequency = 1/f,
-                      Sigma.max = sigma.max,
-                      sigma.min = sigma.min)
+    res <- cbind(data.frame(Frequency = 1/f), as.data.frame(sigmas))
   }
 
   # Plot --------------------------------------------------------------------
@@ -84,13 +82,11 @@ sigmaplot <- function(fr, fr.unit = NULL,
   }
 
   # Reshape data for ggplot2
-  res.plt <- reshape2::melt(res,  id.vars = "Frequency", variable.name = "Sigma")
+  res.plt <- reshape2::melt(res,  id.vars = "Frequency", variable.name = "Sigmas")
 
   # Magnitude plot
   p <- ggplot2::ggplot(data = res.plt, ggplot2::aes_string(x = "Frequency", y = "value")) +
-    ggplot2::geom_line(ggplot2::aes_string(colour = "Sigma")) +
-    ggplot2::scale_color_discrete(labels = c("max(sigma)", "min(sigma)")) +
-    ggplot2::scale_x_log10(breaks = 10 ^ seq(fr[1], fr[2], 1)) +
+    ggplot2::geom_line(ggplot2::aes_string(colour = "Sigmas")) +
     ggplot2::geom_hline(ggplot2::aes(yintercept = 0), linetype = "dashed") +
     ggplot2::ggtitle("Sigma plot") +
     ggplot2::xlab("Frequency [rad/s]") +
