@@ -2,7 +2,7 @@
 
 ## Summary
 
-A collection of `R` functions that enables the frequency-domain analysis of dynamic systems.
+A collection of `R` functions that enables the frequency-domain response analysis (FdRA) of dynamic systems. For a short introduction to FdRA have a look at [this blog post](http://pascal.schulthess.io/2016/freqr/).
 
 ## Installation
 
@@ -38,7 +38,7 @@ from 10^0 to 10^1 and add a highlight at 2 [rad/s], the function inputs take the
 ```
 bodeplot(fr = c(0, 1),
 	      n = c(1, 0.1, 7.5),
-	      d = c(1, 0.12, 9, 0, 0), 
+	      d = c(1, 0.12, 9, 0, 0),
 	      highlight = 2,
 	      label = "Highlight")
 ```
@@ -118,10 +118,10 @@ G(s) = |---|---| = |------|---------|
 from 10^-2 to 10^2 the function inputs take the form
 
 ```
-sigmaplot(fr = c(-2, 2), 
+sigmaplot(fr = c(-2, 2),
 		   A = matrix(c(0, 1, -1, -1), nrow = 2),
-		   B = diag(2), 
-		   C = matrix(c(10, 0, 0, 1), nrow = 2), 
+		   B = diag(2),
+		   C = matrix(c(10, 0, 0, 1), nrow = 2),
 		   D = 0.1*diag(2))
 ```
 
